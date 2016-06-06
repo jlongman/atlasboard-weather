@@ -4,10 +4,16 @@
  * Expected configuration:
  *
  * {
+ *   "widgetTitle" : "Local Weather",
  *   "interval" : 3600000,
+ *
+ *   "key" : "apikeygoeshere", // mandatory!
+ *   "units": {"metric"|"imperial"}, //  optional
+ * 
  *   "lat" : 38.662923,
  *   "lon" : -90.328850,
- *   "widgetTitle" : "Local Weather"
+ *   //    OR
+ *   "cityName: montreal,CA",
  * }
  */
 
@@ -21,14 +27,14 @@ module.exports = {
   onInit: function (config, dependencies) {
 
     /*
-    This is a good place for initialisation logic, like registering routes in express:
+     This is a good place for initialisation logic, like registering routes in express:
 
-    dependencies.logger.info('adding routes...');
-    dependencies.app.route("/jobs/mycustomroute")
-        .get(function (req, res) {
-          res.end('So something useful here');
-        });
-    */
+     dependencies.logger.info('adding routes...');
+     dependencies.app.route("/jobs/mycustomroute")
+     .get(function (req, res) {
+     res.end('So something useful here');
+     });
+     */
   },
 
   /**
@@ -62,12 +68,12 @@ module.exports = {
      It is a good idea to cover this with unit tests as well (see test/weather file)
 
      Checking for the right configuration could be something like this:
+     */
+    if (!config.key) {
+      return jobCallback('missing openweathermap key - see http://openweathermap.org/appid!');
+    }
 
-     if (!config.myrequiredConfig) {
-     return jobCallback('missing configuration properties!');
-     }
-
-
+    /*
      3. SENDING DATA BACK TO THE WIDGET
 
      You can send data back to the widget anytime (ex: if you are hooked into a real-time data stream and
@@ -86,11 +92,42 @@ module.exports = {
      Have a look at test/weather for an example of how to unit tests this easily by mocking easyRequest calls
 
      */
+    var location = "";
+    if (config.cityName) {
+      location = "&q=\"" + String(config.cityName) + "\"";
+    } else if (config.lat && config.lon) {
+      location = "&lat=" + String(config.lat) + "&lon=" + String(config.lon);
+    }
 
-    dependencies.easyRequest.JSON('http://api.openweathermap.org/data/2.5/forecast?units=imperial&lat=' + String(config.lat) + '&lon=' + String(config.lon), function (err, hourlyRes) {
-      dependencies.easyRequest.JSON('http://api.openweathermap.org/data/2.5/forecast/daily?units=imperial&cnt=10&lat=' + String(config.lat) + '&lon=' + String(config.lon), function (err, dailyRes) {
-        jobCallback(err, {title: config.widgetTitle, hourlyContent: hourlyRes, dailyContent: dailyRes});
+    var key = "&appid=" + String(config.key);
+    var units = "&units=metric";
+    if (config.units) {
+      units = "&units=" + String(config.units);
+    }
+    var hourcnt;
+    if (config.hourCount) {
+      hourcnt = "&cnt=" + String(config.hourCount);
+    } else {
+      hourcnt = "";
+    }
+    var daycnt = "&cnt="
+    if (config.dayCount) {
+      daycnt += String(config.dayCount);
+    } else {
+      daycnt += "10";
+    }
+    var todayurl = 'http://api.openweathermap.org/data/2.5/forecast?' + key + units + hourcnt + location;
+    var dailyurl = 'http://api.openweathermap.org/data/2.5/forecast/daily?' + key + units + daycnt + location;
+    dependencies.easyRequest.JSON(todayurl,
+      function (err, hourlyRes) {
+        dependencies.easyRequest.JSON(
+          dailyurl,
+          function (err, dailyRes) {
+            jobCallback(err, {
+              title: config.widgetTitle, hourlyContent: hourlyRes, dailyContent: dailyRes,
+              hourCount: config.hourCount, dayCount: config.dayCount
+            });
+          });
       });
-    });
   }
 };
