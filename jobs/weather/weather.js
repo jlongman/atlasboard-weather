@@ -69,7 +69,8 @@ module.exports = {
 
      Checking for the right configuration could be something like this:
      */
-    if (!config.key) {
+
+    if (!config.globalAuth || !config.globalAuth.weather.openweatherapikey) {
       return jobCallback('missing openweathermap key - see http://openweathermap.org/appid!');
     }
 
@@ -99,7 +100,8 @@ module.exports = {
       location = "&lat=" + String(config.lat) + "&lon=" + String(config.lon);
     }
 
-    var key = "&appid=" + String(config.key);
+    var key = "&appid=" + String(config.globalAuth.weather.openweatherapikey);
+
     var units = "&units=metric";
     if (config.units) {
       units = "&units=" + String(config.units);
