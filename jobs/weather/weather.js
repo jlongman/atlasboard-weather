@@ -95,7 +95,7 @@ module.exports = {
      */
     var location = "";
     if (config.cityName) {
-      location = "&q=\"" + String(config.cityName) + "\"";
+      location = "&q=" + String(config.cityName) + "";
     } else if (config.lat && config.lon) {
       location = "&lat=" + String(config.lat) + "&lon=" + String(config.lon);
     }
@@ -118,10 +118,11 @@ module.exports = {
     } else {
       daycnt += "10";
     }
-    var todayurl = 'http://api.openweathermap.org/data/2.5/forecast?' + key + units + hourcnt + location;
-    var dailyurl = 'http://api.openweathermap.org/data/2.5/forecast/daily?' + key + units + daycnt + location;
+    const todayurl = 'http://api.openweathermap.org/data/2.5/forecast?' + key + units + hourcnt + location;
+    const dailyurl = 'http://api.openweathermap.org/data/2.5/forecast/daily?' + key + units + daycnt + location;
     dependencies.easyRequest.JSON(todayurl,
       function (err, hourlyRes) {
+        console.log(dailyurl);
         dependencies.easyRequest.JSON(
           dailyurl,
           function (err, dailyRes) {
