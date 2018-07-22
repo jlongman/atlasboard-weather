@@ -75,7 +75,7 @@ module.exports = {
       return jobCallback('missing openweathermap key - see http://openweathermap.org/appid!');
     }
     if (config.globalAuth && !config.globalAuth.weather.openweatherapikey && process.env.WEATHER.OPENWEATHERAPIKEY) {
-       config.globalAuth.weather.openweatherapikey = process.env.WEATHER.OPENWEATHERAPIKEY;
+       config.globalAuth.weather = process.env.WEATHER;
     }
 
     /*
