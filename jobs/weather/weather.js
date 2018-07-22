@@ -70,8 +70,11 @@ module.exports = {
      Checking for the right configuration could be something like this:
      */
 
-    if (!config.globalAuth || !config.globalAuth.weather.openweatherapikey) {
+    if (!config.globalAuth || !config.globalAuth.weather.openweatherapikey || !process.env.WEATHER.OPENWEATHERAPIKEY) {
       return jobCallback('missing openweathermap key - see http://openweathermap.org/appid!');
+    }
+    if (config.globalAuth && !config.globalAuth.weather.openweatherapikey && process.env.WEATHER.OPENWEATHERAPIKEY) {
+       config.globalAuth.weather.openweatherapikey = process.env.WEATHER.OPENWEATHERAPIKEY;
     }
 
     /*
