@@ -71,7 +71,6 @@ module.exports = {
      */
 
     if (!config.globalAuth || !(config.globalAuth.weather.openweatherapikey || process.env.WEATHER_OPENWEATHERAPIKEY)) {
-      console.log(process.env);
       return jobCallback('missing openweathermap key - see http://openweathermap.org/appid!');
     }
     var apikey = "";
