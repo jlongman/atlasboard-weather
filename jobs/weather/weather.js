@@ -70,13 +70,13 @@ module.exports = {
      Checking for the right configuration could be something like this:
      */
 
-    if (!config.globalAuth || !(config.globalAuth.weather.openweatherapikey || process.env["WEATHER.OPENWEATHERAPIKEY"])) {
+    if (!config.globalAuth || !(config.globalAuth.weather.openweatherapikey || process.env.WEATHER_OPENWEATHERAPIKEY)) {
       console.log(process.env);
       return jobCallback('missing openweathermap key - see http://openweathermap.org/appid!');
     }
     var apikey = "";
-    if (config.globalAuth && !config.globalAuth.weather.openweatherapikey && process.env["WEATHER.OPENWEATHERAPIKEY"]) {
-       apikey = process.env["WEATHER.OPENWEATHERAPIKEY"];
+    if (config.globalAuth && !config.globalAuth.weather.openweatherapikey && process.env_WEATHER_OPENWEATHERAPIKEY) {
+       apikey = process.env.WEATHER_OPENWEATHERAPIKEY;
     } else {
        apikey = config.globalAuth.weather.openweatherapikey;
     }
